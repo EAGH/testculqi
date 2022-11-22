@@ -85,6 +85,6 @@ function valid_email(value) {
 }
 function tokenMiddleware(value) {
     const token = value.split(" ")[1];
-    if (token.length == 27 && token.split("_")[0] == "pk" && token.split("_")[1] == "test") return true;
+    if (token.length == 16 && token.split("_")[0] == "pk" && token.split("_")[1] == "test") return true;
     return false;
 }
