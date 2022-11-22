@@ -7,23 +7,3 @@ services:
       - 3000:3000
     build: .
     command: node app.js
-  mongodb:
-    image: mongo
-    container_name: mongo
-    ports:
-      - 27018:27017
-  redis:
-    image: redis:7.0.5
-    container_name: redis
-    ports:
-      - 6379:6379
-  postgre:
-    image: postgres:9.6.2-alpine
-    container_name: postgre
-    ports:
-      - 5432:5432
-  mysql:
-    image: mysql:8.0.31
-    container_name: mysql
-    ports:
-      - 3306:3306

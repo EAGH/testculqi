@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:18
 WORKDIR /home/testculqi
 COPY package*.json ./
 RUN npm install
