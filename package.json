@@ -1,0 +1,19 @@
+{
+  "name": "culqi-test",
+  "version": "1.0.0",
+  "description": "Prueba tecnica",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "tsc && node src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Eduardo Gomez",
+  "license": "ISC",
+  "devDependencies": {
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.3"
+  },
+  "dependencies": {
+    "mongoose": "^6.7.2"
+  }
+}
