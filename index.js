@@ -1,50 +1,52 @@
 import { MongoClient } from "mongodb";
 const MONGODB_URI = "mongodb+srv://testculqi:testculqi@testculqi.ytvbzv3.mongodb.net/?retryWrites=true&w=majority";
 let cachedDb = null;
-
+// funcion para conectar a la DB
 async function connectToDatabase() {
     if (cachedDb) {
         return cachedDb;
     }
-    // Connect to our MongoDB database hosted on MongoDB Atlas
     const client = await MongoClient.connect(MONGODB_URI);
-    // Specify which database we want to use
     const db = await client.db("testculqidb");
     cachedDb = db;
     return db;
 }
-// Once we connect to the data
+// funcion principal de lambda
 export const handler = async (event) => {
-    // Get an instance of our database
-    const db = await connectToDatabase();
-    /* event.email
-    event.card_number
-    event.cvv
-    event.expiration_year
-    event.expiration_month */
-    console.log("***********", event.headers["header1"]);
-    console.log("+++++++++++", event);
-    const method = event.requestContext.http.method;
     let response = {
         statusCode: 400,
         body: 'Error endpoint',
     };
+    // verificacion del token primeramente
+    if (!tokenMiddleware(event.headers.authorization)) return response;
+    // si el token esta bien podria continuar con ejecutar la coneccion de la bd
+    const db = await connectToDatabase();
+    //se obtiene el metodo http para verificar que sea post
+    const method = event.requestContext.http.method;
     if (method === 'POST') {
-        if (!valid_credit_card(event.card_number)) throw 'Error Card Number' // { statusCode: 400, body: 'Error Card Number'};
-        if (!valid_length(event.card_number, 13) && !valid_length(event.card_number, 16)) throw 'Error length Card Number' // { statusCode: 400, body: 'Error length Card Number'};
-        if (!valid_length(event.cvv.length, 3) || !valid_length(event.cvv.length, 4)) throw 'Error length Code CVV' // { statusCode: 400, body: 'Error length Code CVV'};
-        if ((!valid_length(value.length, 1) && !valid_length(value.length, 2)) || !valid_month(event.expiration_month)) throw 'Error Month' // { statusCode: 400, body: 'Error length Code CVV'};
-        if (!valid_year(event.expiration_year) || !valid_date(event.expiration_year.length, 4)) throw 'Error Year' // { statusCode: 400, body: 'Error month'};
-        if (!valid_email(event.email) || event.email.length < 5 || event.email.length > 100) throw 'Error Year' // { statusCode: 400, body: 'Error year'};
-        const cards = await db.collection("cards").createIndex(event);
-        response = {
-            statusCode: 200,
-            body: JSON.stringify(cards),
-        };
+        try {
+            let body = JSON.parse(event.body)
+            if (!valid_credit_card(body.card_number)) throw 'Error Card Number' // validate LUHN
+            if (!valid_length(body.card_number, 13) && !valid_length(body.card_number, 16)) throw 'Error length Card Number' // validate cards
+            if (!valid_length(body.cvv, 3) && !valid_length(body.cvv, 4)) throw 'Error length Code CVV' // validate cvv
+            if ((!valid_length(body.expiration_month, 1) && !valid_length(body.expiration_month, 2)) || !valid_month(body.expiration_month)) throw 'Error length month' // validate month
+            if (!valid_year(body.expiration_year) || !valid_length(body.expiration_year, 4)) throw 'Error year' // validate year
+            if (body.email.length < 5 || body.email.length > 100 || !valid_email(body.email)) throw 'Error email' // validate email
+            const cards = await db.collection("cards").insertOne(body);
+            response = {
+                statusCode: 200,
+                body: JSON.stringify(cards),
+            };
+        } catch (error) {
+            response = {
+                statusCode: 400,
+                body: error,
+            };
+        }
+        return response;
     }
-    return response;
 };
-
+// funciones validadores con nombres que se definen ellos mimos
 function valid_credit_card(value) {
     if (/[^0-9-\s]+/.test(value)) return false;
     var nCheck = 0, nDigit = 0, bEven = false;
@@ -61,8 +63,8 @@ function valid_credit_card(value) {
     return (nCheck % 10) == 0;
 }
 function valid_length(value, length) {
-    if (value != length) return false;
-    return true;
+    if (value.length == length) return true;
+    return false;
 }
 function valid_month(value) {
     value = parseInt(value, 10);
@@ -77,11 +79,12 @@ function valid_year(value) {
 }
 function valid_email(value) {
     const prov = value.split("@");
-    if (prov[1] === 'gmail.com' || prov[1] === 'hotmail.com' || prov[1] === 'yahoo.es') return true;
+    let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+    if ((prov[1] === 'gmail.com' || prov[1] === 'hotmail.com' || prov[1] === 'yahoo.es') && regex.test(value)) return true;
     return false;
 }
-function valid_token(value) {
-    const prov = value.split("@");
-    if (prov[1] === 'gmail.com' || prov[1] === 'hotmail.com' || prov[1] === 'yahoo.es') return true;
+function tokenMiddleware(value) {
+    const token = value.split(" ")[1];
+    if (token.length == 27 && token.split("_")[0] == "pk" && token.split("_")[1] == "test") return true;
     return false;
 }
