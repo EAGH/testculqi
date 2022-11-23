@@ -1,0 +1,86 @@
+{
+	"info": {
+		"_postman_id": "06c4198b-b51b-4f5b-b8d4-e9283787f760",
+		"name": "testculqi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4658953"
+	},
+	"item": [
+		{
+			"name": "https://n7jp4dqyc6.execute-api.us-east-2.amazonaws.com/default/testculqi",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "pk_test_1234567890123456",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"gian.corzo@gmail.com\",\r\n    \"card_number\": \"4557880633293919\",\r\n    \"cvv\": \"123\",\r\n    \"expiration_year\": \"2025\",\r\n    \"expiration_month\": \"09\"\r\n}"
+				},
+				"url": {
+					"raw": "https://n7jp4dqyc6.execute-api.us-east-2.amazonaws.com/default/newcard",
+					"protocol": "https",
+					"host": [
+						"n7jp4dqyc6",
+						"execute-api",
+						"us-east-2",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"default",
+						"newcard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://n7jp4dqyc6.execute-api.us-east-2.amazonaws.com/default/testculqi",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "pk_test_P6Oz4KFNal22aa36",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://n7jp4dqyc6.execute-api.us-east-2.amazonaws.com/default/testculqi",
+					"protocol": "https",
+					"host": [
+						"n7jp4dqyc6",
+						"execute-api",
+						"us-east-2",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"default",
+						"testculqi"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

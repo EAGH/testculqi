@@ -1,9 +1,0 @@
-version: '3.9'
-services:
-  nodestest:
-    image: node
-    container_name: testserve
-    ports:
-      - 3000:3000
-    build: .
-    command: node app.js
